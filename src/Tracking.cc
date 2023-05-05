@@ -37,6 +37,10 @@
 
 #include<mutex>
 
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 using namespace std;
 
@@ -236,7 +240,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
 }
 
 
-cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
+cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp, const int & frameSeqIndex)
 {
     mImGray = im;
 
@@ -259,6 +263,10 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
         mCurrentFrame = Frame(mImGray,timestamp,mpIniORBextractor,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth);
     else
         mCurrentFrame = Frame(mImGray,timestamp,mpORBextractorLeft,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth);
+
+    // Assign the actual frame sequence-index to the frame object.
+    mCurrentFrame.mFrameSeqIndex = frameSeqIndex;
+    mCurrentFrame.SetFrameSeqIndex(frameSeqIndex);
     
     //cout<<"Frame ID: "<<mCurrentFrame.mnId<<endl;
 

@@ -99,6 +99,9 @@ public:
     // Backprojects a keypoint (if stereo/depth info available) into 3D world coordinates.
     cv::Mat UnprojectStereo(const int &i);
 
+    // Assign a frame index to the Frame 
+    void SetFrameSeqIndex(const int &index);
+
 public:
     // Vocabulary used for relocalization.
     ORBVocabulary* mpORBvocabulary;
@@ -190,6 +193,9 @@ public:
     static float mnMaxY;
 
     static bool mbInitialComputations;
+
+    // Frame index in the sequence.
+    int mFrameSeqIndex;
 
 
 private:

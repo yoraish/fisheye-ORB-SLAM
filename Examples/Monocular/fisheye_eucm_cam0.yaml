@@ -11,8 +11,8 @@ Camera.cx: 254.9135474328476
 Camera.cy: 256.8281792099312
 
 # EUCM distortion parameters (alpha beta)
-Camera.k1: 0.6288947328627524
-Camera.k2: 1.0441360489134845
+Camera.k1: 0.6288947328627524 # Alpha.
+Camera.k2: 1.0441360489134845 # Beta.
 
 # Camera frames per second 
 Camera.fps: 20.0

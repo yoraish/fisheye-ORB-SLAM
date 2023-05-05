@@ -47,6 +47,12 @@ int main(int argc, char **argv)
     string strFile = string(argv[3])+"/rgb.txt";
     LoadImages(strFile, vstrImageFilenames, vTimestamps);
 
+    cout << "Sample File names: " << endl;
+    for(int i=0; i<100; i++)
+    {
+        cout << i << " " << vstrImageFilenames[i] << endl;
+    }
+    
     int nImages = vstrImageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
@@ -70,6 +76,9 @@ int main(int argc, char **argv)
         //imtemp = cv::imread(string(argv[3])+"/"+vstrImageFilenames[ni],CV_LOAD_IMAGE_GRAYSCALE);
         //imtemp.copyTo(im, immask);
 
+        cout<< "Trying to load image at " << string(argv[3]) << "/" << vstrImageFilenames[ni] << endl;
+        cout << " This is the " << ni << "th image." << endl;
+
         im = cv::imread(string(argv[3])+"/"+vstrImageFilenames[ni],CV_LOAD_IMAGE_GRAYSCALE);
 
         double tframe = vTimestamps[ni];
@@ -91,7 +100,7 @@ int main(int argc, char **argv)
 #endif
 
         // Pass the image to the SLAM system
-        SLAM.TrackMonocular(im,tframe/1e9);
+        SLAM.TrackMonocular(im,tframe/1e9, ni);
         //SLAM.TrackMonocular(im,tframe/1e6);
 
 #ifdef COMPILEDWITHC11
