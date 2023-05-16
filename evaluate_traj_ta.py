@@ -9,6 +9,7 @@ Finally, we'll compute the ATE and RPE scores.
 '''
 
 import os
+from colorama import Fore, Style
 import numpy as np
 from scipy.spatial.transform import Rotation
 import sys
@@ -22,10 +23,11 @@ ta.init('/media/yoraish/overflow/data/tartanair-v2')
 ####################################################################
 
 # Get the ground truth trajectory.
-env = "AbandonedCableExposure"
+env = "ShoreCavesExposure"
 difficulty = "hard"
-seq = "P002"
+seq = "P001"
 camera_name = "lcam_front"
+use_only_keyframes = False
 
 data_dir = f'/home/yoraish/code/tartanvo-fisheye-transformer/src/tartanvo_fisheye/evaluation/baselines/fisheye-ORB-SLAM/data/tartanair_eucm/{env}/Data_{difficulty}/{seq}/results/'
 orb_traj_path = os.path.join(data_dir, 'est_orb.txt')
@@ -61,14 +63,16 @@ orb_traj = orb_traj[:, 1:]
 R_ned_rdf = np.array([[0, 0, 1], [1, 0, 0], [0, 1, 0]])
 
 
-R_ned_rdf = Rotation.from_euler('xyz', [0, -90, 0], degrees=True).as_matrix()
+# R_ned_rdf = Rotation.from_euler('xyz', [0, -90, 0], degrees=True).as_matrix()
 
-for i in range(orb_traj.shape[0]):
-    R_i = Rotation.from_quat(orb_traj[i, 3:]).as_matrix()
-    R_i = R_ned_rdf @ R_i
-    q_i = Rotation.from_matrix(R_i).as_quat()
-    orb_traj[i, 3:] = q_i
+# for i in range(orb_traj.shape[0]):
+#     R_i = Rotation.from_quat(orb_traj[i, 3:]).as_matrix()
+#     R_i = R_ned_rdf @ R_i
+#     q_i = Rotation.from_matrix(R_i).as_quat()
+#     orb_traj[i, 3:] = q_i
 
+# Also rotate the entire estimated trajectory.
+orb_traj[:, :3] = (R_ned_rdf @ orb_traj[:, :3].T).T
 ####################
 # Compute the ATE and RPE scores.
 ####################
@@ -82,15 +86,20 @@ result_orb = ta.evaluate_traj(orb_traj, gt_traj_filt, plot=False, plot_out_path 
 # Get the TARTANVO_FISHEYE trajectory.
 tvofe_traj = np.loadtxt(tvofe_traj_path)
 
-# Filter the ground truth trajectory to only include the relevant frames.
-gt_traj_filt = gt_traj[orb_first_frame: orb_last_frame - 5, :]
-tvofe_traj_filt = tvofe_traj[orb_first_frame: orb_last_frame - 5, :]
+if not use_only_keyframes:
+    # Filter the ground truth trajectory to only include the relevant frames.
+    gt_traj_filt = gt_traj[orb_first_frame: orb_last_frame - 5, :]
+    tvofe_traj_filt = tvofe_traj[orb_first_frame: orb_last_frame - 5, :]
 
-# Can also use only the keyframes from ORB.
-# print("USING ONLY KEYFRAMES FROM ORB")
-# gt_traj_filt = gt_traj[orb_frame_ixs[:-3]]
-# tvofe_traj_filt = tvofe_traj[orb_frame_ixs[:-3]]
+else:
+    # Can also use only the keyframes from ORB.
+    # print("USING ONLY KEYFRAMES FROM ORB")
+    gt_traj_filt = gt_traj[orb_frame_ixs[:-3]]
+    tvofe_traj_filt = tvofe_traj[orb_frame_ixs[:-3]]
 
+    print(Fore.RED + "WARNING: USING ONLY KEYFRAMES FROM ORB" + Style.RESET_ALL)
+    print(Fore.RED + "WARNING: USING ONLY KEYFRAMES FROM ORB" + Style.RESET_ALL)
+    print(Fore.RED + "WARNING: USING ONLY KEYFRAMES FROM ORB" + Style.RESET_ALL)
 
 # Scale all the orientations.
 # tvofe_traj_filt[:, :3] = tvofe_traj_filt[:, :3] * 10

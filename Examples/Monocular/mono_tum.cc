@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     // Retrieve paths to images
     vector<string> vstrImageFilenames;
     vector<double> vTimestamps;
-    string strFile = string(argv[3])+"/rgb.txt";
+    string strFile = string(argv[3])+"/lcam_eucm_stamps.txt";
     LoadImages(strFile, vstrImageFilenames, vTimestamps);
 
     cout << "Sample File names: " << endl;
