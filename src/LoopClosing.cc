@@ -104,6 +104,7 @@ bool LoopClosing::CheckNewKeyFrames()
 
 bool LoopClosing::DetectLoop()
 {
+    return false; // <-------------- REMOVES POSE GRAPH OPTIMIZATION. I THINK.
     {
         unique_lock<mutex> lock(mMutexLoopQueue);
         mpCurrentKF = mlpLoopKeyFrameQueue.front();
